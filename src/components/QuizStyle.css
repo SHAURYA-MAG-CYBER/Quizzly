@@ -1,36 +1,3 @@
-  /* .animate-transition {
-    transition: background-color 0.5s ease-in-out;
-  }
-  
-  .faded {
-    opacity: 1%; 
-  }
-
-  .border-green {
-    border: 3px solid green !important; 
-  }
-
-  .leaderboard-container {
-    max-height: 250px; 
-    width: 50%; 
-    margin: auto;
-    overflow-y: auto; 
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    background-color: #f9f9f9;
-  }
-  
-  .leaderboard-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .leaderboard-list .list-group-item {
-    text-align: left;
-    font-size: 14px;
-  } */
-
 
   /* General Page Styling */
 body {
@@ -80,4 +47,41 @@ button:hover {
 .leaderboard-list .list-group-item {
   text-align: left;
   font-size: 14px;
+}
+
+/* Countdown Animation */
+.countdown {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #ff4757;
+  animation: countdown-zoom 1s ease-in-out infinite;
+}
+
+@keyframes countdown-zoom {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Question Fade Animation */
+.fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
 }
