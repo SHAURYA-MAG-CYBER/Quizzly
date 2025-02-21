@@ -1,0 +1,32 @@
+  .animate-transition {
+    transition: background-color 0.5s ease-in-out;
+  }
+  
+  .faded {
+    opacity: 1%; /* Fades out other options */
+  }
+
+  .border-green {
+    border: 3px solid green !important; /* Only border turns green when time runs out */
+  }
+
+  .leaderboard-container {
+    max-height: 250px; /* Adjust to control the height */
+    width: 50%; /* Keeps the leaderboard compact */
+    margin: auto;
+    overflow-y: auto; /* Enables scrolling */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  .leaderboard-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .leaderboard-list .list-group-item {
+    text-align: left;
+    font-size: 14px;
+  }
