@@ -1,18 +1,25 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import "./QuizStyle.css";
+import { getAttempts, clearAttempts } from "../utils/indexedDB";
 
 function StartPage({ onStart }) {
   const [username, setUsername] = useState("");
-  const [attempts, setAttempts] = useState(
-    JSON.parse(localStorage.getItem("quizAttempts")) || []
-  );
+  const [attempts, setAttempts] = useState([]);
 
-  const clearLeaderboard = () => {
+  useEffect(() => {
+    async function fetchAttempts() {
+      const data = await getAttempts();
+      setAttempts(data.sort((a, b) => b.score - a.score)); // Sort by score
+    }
+    fetchAttempts();
+  }, []);
+
+  const clearLeaderboard = async () => {
     const confirmClear = window.confirm("Are you sure you want to clear the leaderboard?");
     if (confirmClear) {
-      localStorage.removeItem("quizAttempts");
+      await clearAttempts();
       setAttempts([]); // Clear state as well
     }
   };

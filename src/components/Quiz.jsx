@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./QuizStyle.css";
 import PropTypes from "prop-types";
+import { saveAttempt } from "../utils/indexedDB";
 
 const questions = [
   {
@@ -70,9 +71,14 @@ function Quiz({ username, startTime, onEnd }) {
 
   const handleNext = () => {
     if(currentQuestion>=questions.length-1) {
-        saveAttempt(score);
-        onEnd(score, questions.length);
-        return;
+      const endTime = Date.now();
+      const timeTaken = Math.floor((endTime - startTime) / 1000);
+      const date = new Date().toLocaleString();
+  
+      const attempt = { username, score, date, timeTaken };
+      saveAttempt(attempt);
+      onEnd(score, questions.length);
+      return;
     }
         
     setCurrentQuestion((prev) => prev+1);   
@@ -85,16 +91,16 @@ function Quiz({ username, startTime, onEnd }) {
   };
   
   // Function to save scores in Local Storage
-  const saveAttempt = (score) => {
-    const endTime = Date.now();
-    const timeTaken = Math.floor((endTime - startTime)/1000);
-    const date = new Date().toLocaleString();
+  // const saveAttempt = (score) => {
+  //   const endTime = Date.now();
+  //   const timeTaken = Math.floor((endTime - startTime)/1000);
+  //   const date = new Date().toLocaleString();
 
-    const attempts = JSON.parse(localStorage.getItem("quizAttempts")) || [];
-    attempts.push({ username, score, date, timeTaken });
-    attempts.sort((a, b) => b.score - a.score); // Sort scores from best to worst
-    localStorage.setItem("quizAttempts", JSON.stringify(attempts));
-  };
+  //   const attempts = JSON.parse(localStorage.getItem("quizAttempts")) || [];
+  //   attempts.push({ username, score, date, timeTaken });
+  //   attempts.sort((a, b) => b.score - a.score); // Sort scores from best to worst
+  //   localStorage.setItem("quizAttempts", JSON.stringify(attempts));
+  // };
 
   return (
     <div className="container-fluid d-flex align-items-center justify-content-center vh-100 bg-light">

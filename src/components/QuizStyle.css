@@ -1,20 +1,20 @@
-  .animate-transition {
+  /* .animate-transition {
     transition: background-color 0.5s ease-in-out;
   }
   
   .faded {
-    opacity: 1%; /* Fades out other options */
+    opacity: 1%; 
   }
 
   .border-green {
-    border: 3px solid green !important; /* Only border turns green when time runs out */
+    border: 3px solid green !important; 
   }
 
   .leaderboard-container {
-    max-height: 250px; /* Adjust to control the height */
-    width: 50%; /* Keeps the leaderboard compact */
+    max-height: 250px; 
+    width: 50%; 
     margin: auto;
-    overflow-y: auto; /* Enables scrolling */
+    overflow-y: auto; 
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 10px;
@@ -29,4 +29,55 @@
   .leaderboard-list .list-group-item {
     text-align: left;
     font-size: 14px;
-  }
+  } */
+
+
+  /* General Page Styling */
+body {
+  background-color: #f4f4f4;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Quiz Card */
+.card {
+  border-radius: 10px;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons */
+button {
+  transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Progress Bar */
+.progress-bar {
+  transition: width 0.3s linear;
+}
+
+/* Leaderboard Styling */
+.leaderboard-container {
+  max-height: 250px;
+  width: 50%;
+  margin: auto;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.leaderboard-list {
+  list-style: none;
+  padding: 0;
+}
+
+.leaderboard-list .list-group-item {
+  text-align: left;
+  font-size: 14px;
+}
