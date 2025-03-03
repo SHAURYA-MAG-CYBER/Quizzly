@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./QuizStyle.css";
 import PropTypes from "prop-types";
-import { saveAttempt } from "../utils/indexedDB";
-import questions from "../data/questions";
 import { CSSTransition } from "react-transition-group"; 
 
+
+const API_URL = "http://localhost:5000/api/quiz/all";
+
 function Quiz({ username, startTime, onEnd }) {
+  const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -17,7 +19,23 @@ function Quiz({ username, startTime, onEnd }) {
   const [showQuestion, setShowQuestion] = useState(false); 
   const [isCountingDown, setIsCountingDown] = useState(true); 
   const [countdown, setCountdown] = useState(3);
+  const [loading, setLoading] = useState(true);
   const questionRef = useRef(null);
+
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        setQuestions(data);
+        setLoading(false);
+      } catch(error) {
+        console.log("Error fetching quizzes:",error);
+        setLoading(false);
+      }
+    };
+    fetchQuizzes();
+  },[]);
 
   useEffect(() => {
     if (countdown > 0) {
@@ -38,7 +56,7 @@ function Quiz({ username, startTime, onEnd }) {
 
   useEffect(() => {
     
-    if(isSubmitted || isCountingDown) return;
+    if(isSubmitted || isCountingDown || questions.length === 0) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -53,7 +71,7 @@ function Quiz({ username, startTime, onEnd }) {
     }, 100); // Update every 100ms
 
     return () => clearInterval(timer);
-  }, [currentQuestion, isSubmitted, isCountingDown]);
+  }, [currentQuestion, isSubmitted, isCountingDown, questions]);
 
   const handleSubmit = () => {
     setIsSubmitted(true);
@@ -73,9 +91,9 @@ function Quiz({ username, startTime, onEnd }) {
       if(currentQuestion>=questions.length-1) {
         const endTime = Date.now();
         const timeTaken = Math.floor((endTime - startTime) / 1000);
-        const date = new Date().toLocaleString();
-        saveAttempt({username, score, date, timeTaken});
-        onEnd(score, questions.length);
+        // const date = new Date().toLocaleString();
+        handleQuizEnd(score, questions.length, timeTaken);
+        onEnd(score, questions.length, timeTaken);
         return;
       }
       setCurrentQuestion((prev) => prev+1);   
@@ -89,6 +107,27 @@ function Quiz({ username, startTime, onEnd }) {
       }, 50);
     }, 300);
   }
+
+  const handleQuizEnd = (score, totalQuestions, timeTaken) => {
+    const attemptData = {
+      username,
+      score,
+      totalQuestions,
+      timeTaken,
+      date: new Date().toLocaleString(), // Store attempt date
+    };
+  
+    // Send attempt to MongoDB
+    fetch("http://localhost:5000/api/attempt/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(attemptData),
+    })
+      .then((response) => response.json())
+      .then(() => console.log("✅ Attempt saved successfully"))
+      .catch((error) => console.error("❌ Error saving attempt:", error));
+  };
+  
   
   // Function to save scores in Local Storage
   // const saveAttempt = (score) => {
@@ -101,6 +140,9 @@ function Quiz({ username, startTime, onEnd }) {
   //   attempts.sort((a, b) => b.score - a.score); // Sort scores from best to worst
   //   localStorage.setItem("quizAttempts", JSON.stringify(attempts));
   // };
+
+  if (loading) return <h2 className="text-center mt-5">Loading Questions...</h2>;
+  if (questions.length === 0) return <h2 className="text-center mt-5">No quizzes available.</h2>;
 
   return (
     <div className="container-fluid d-flex align-items-center justify-content-center vh-100 bg-light">
@@ -169,7 +211,7 @@ function Quiz({ username, startTime, onEnd }) {
                 type="text"
                 className="form-control text-center mt-3"
                 placeholder="Type your answer here..."
-                value={selectedAnswer}
+                value={selectedAnswer || ""}
                 onChange={(e) => setSelectedAnswer(e.target.value)}
                 disabled={isDisabled}
                 />
